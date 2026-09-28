@@ -64,7 +64,8 @@ const CATEGORIES = [
 ];
 
 export const MenuCustomizerModal = ({ pkg, onClose }) => {
-  const { companyInfo } = useCatering();
+  const { companyInfo, masterMenu } = useCatering();
+  const currentMenu = masterMenu || MASTER_MENU;
   const [selections, setSelections] = useState({ welcomeDrinks: [], starters: [], mainCourse: [], desserts: [] });
   const [openCategories, setOpenCategories] = useState({ welcomeDrinks: true, starters: false, mainCourse: false, desserts: false });
   const [searchTerms, setSearchTerms] = useState({ welcomeDrinks: '', starters: '', mainCourse: '', desserts: '' });
@@ -93,7 +94,8 @@ export const MenuCustomizerModal = ({ pkg, onClose }) => {
 
   const filteredItems = (catKey) => {
     const term = searchTerms[catKey].toLowerCase();
-    return MASTER_MENU[catKey].filter(item => item.toLowerCase().includes(term));
+    const list = currentMenu[catKey] || [];
+    return list.filter(item => item.toLowerCase().includes(term));
   };
 
   const buildWhatsAppMessage = () => {
@@ -216,7 +218,7 @@ export const MenuCustomizerModal = ({ pkg, onClose }) => {
                         {cat.number}. {cat.label}
                       </div>
                       <div className={`text-[11px] ${isOpen ? 'text-[#c8b87a]' : 'text-stone-500'}`}>
-                        {MASTER_MENU[cat.key].length} items available
+                        {(currentMenu[cat.key] || []).length} items available
                         {selected.length > 0 && <span className="ml-2 font-bold text-[#d4af37]">• {selected.length} selected</span>}
                       </div>
                     </div>

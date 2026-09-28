@@ -66,11 +66,59 @@ const FULL_MENU_CATEGORIES = [
 ];
 
 /* ─── Full Menu View ───────────────────────────────────────────────── */
-const FullMenuView = ({ onOpenCustomizer }) => {
+const FullMenuView = ({ onOpenCustomizer, masterMenu }) => {
+  const currentMenu = masterMenu || MASTER_MENU;
+  const categories = [
+    {
+      key: 'welcomeDrinks',
+      number: '01',
+      title: 'Welcome Drinks & Coolers',
+      subtitle: 'Refreshing arrival beverages, herbal decoctions & traditional theerthams',
+      icon: Wine,
+      accent: '#2563eb',
+      badgeBg: 'bg-blue-900/10 text-blue-900 border-blue-200',
+      headerGradient: 'from-[#0d2e24] via-[#164436] to-[#0d2e24]',
+      items: currentMenu.welcomeDrinks || []
+    },
+    {
+      key: 'starters',
+      number: '02',
+      title: 'Starters & Crispy Appetizers',
+      subtitle: 'Freshly fried vadai, tawa roasts, cutlets & savory South Indian delicacies',
+      icon: Utensils,
+      accent: '#d97706',
+      badgeBg: 'bg-amber-900/10 text-amber-900 border-amber-200',
+      headerGradient: 'from-[#1a382b] via-[#224b3b] to-[#1a382b]',
+      items: currentMenu.starters || []
+    },
+    {
+      key: 'mainCourse',
+      number: '03',
+      title: 'Main Course & Banana Leaf Delicacies',
+      subtitle: 'Seeraga Samba pulao, arachivitta sambar, rasam, usili, poriyal, breads & live stations',
+      icon: Soup,
+      accent: '#059669',
+      badgeBg: 'bg-emerald-900/10 text-emerald-900 border-emerald-200',
+      headerGradient: 'from-[#0d2e24] via-[#1a4435] to-[#0d2e24]',
+      items: currentMenu.mainCourse || []
+    },
+    {
+      key: 'desserts',
+      number: '04',
+      title: 'Desserts, Sweets & Brass Filter Kaapi',
+      subtitle: 'Slow-cooked payasams, pure desi ghee halwas, traditional laddoos & degree filter coffee',
+      icon: IceCream,
+      accent: '#e11d48',
+      badgeBg: 'bg-rose-900/10 text-rose-900 border-rose-200',
+      headerGradient: 'from-[#1c2e25] via-[#2a4538] to-[#1c2e25]',
+      items: currentMenu.desserts || []
+    }
+  ];
+
   const [searchTerm, setSearchTerm] = useState('');
   const [activeCategoryFilter, setActiveCategoryFilter] = useState('all');
 
-  const filteredCategories = FULL_MENU_CATEGORIES.map(cat => {
+  const filteredCategories = categories.map(cat => {
     if (activeCategoryFilter !== 'all' && activeCategoryFilter !== cat.key) {
       return { ...cat, items: [] };
     }
@@ -80,7 +128,7 @@ const FullMenuView = ({ onOpenCustomizer }) => {
     return { ...cat, items: filteredItems };
   }).filter(cat => cat.items.length > 0);
 
-  const totalItemsCount = FULL_MENU_CATEGORIES.reduce((acc, cat) => acc + cat.items.length, 0);
+  const totalItemsCount = categories.reduce((acc, cat) => acc + cat.items.length, 0);
 
   return (
     <div className="space-y-10">
@@ -277,7 +325,7 @@ const FullMenuView = ({ onOpenCustomizer }) => {
 
 /* ─── Main Packages Section ────────────────────────────────────────── */
 export const PackagesSection = () => {
-  const { packages, openQuoteModalForPackage } = useCatering();
+  const { packages, openQuoteModalForPackage, masterMenu } = useCatering();
   const [selectedCategoryTab, setSelectedCategoryTab] = useState('all');
   const [customizerPkg, setCustomizerPkg] = useState(null); // null = closed
 
@@ -349,7 +397,7 @@ export const PackagesSection = () => {
 
         {/* ── Conditional View: Full Menu or Packages Grid ── */}
         {isFullMenuTab ? (
-          <FullMenuView onOpenCustomizer={(pkg) => setCustomizerPkg(pkg || {})} />
+          <FullMenuView onOpenCustomizer={(pkg) => setCustomizerPkg(pkg || {})} masterMenu={masterMenu} />
         ) : (
           <>
             {/* Packages Cards Grid in Warm Cream & Gold */}

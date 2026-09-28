@@ -4,7 +4,8 @@ import {
   INITIAL_PRODUCTS, 
   INITIAL_GALLERY, 
   INITIAL_PORTFOLIO, 
-  COMPANY_INFO 
+  COMPANY_INFO,
+  MASTER_MENU
 } from '../data/initialData';
 
 const CateringContext = createContext(null);
@@ -62,6 +63,11 @@ export const CateringProvider = ({ children }) => {
     return saved ? JSON.parse(saved) : [];
   });
 
+  const [masterMenu, setMasterMenu] = useState(() => {
+    const saved = localStorage.getItem('sdc_master_menu');
+    return saved ? JSON.parse(saved) : MASTER_MENU;
+  });
+
   // Modal States
   const [inquiryModalOpen, setInquiryModalOpen] = useState(false);
   const [selectedPackageForQuote, setSelectedPackageForQuote] = useState(null);
@@ -91,6 +97,10 @@ export const CateringProvider = ({ children }) => {
   useEffect(() => {
     localStorage.setItem('sdc_cart', JSON.stringify(cart));
   }, [cart]);
+
+  useEffect(() => {
+    localStorage.setItem('sdc_master_menu', JSON.stringify(masterMenu));
+  }, [masterMenu]);
 
   useEffect(() => {
     localStorage.setItem('sdc_admin_auth', adminAuth ? 'true' : 'false');
@@ -212,16 +222,63 @@ export const CateringProvider = ({ children }) => {
 
   const clearCart = () => setCart([]);
 
+  // Menu Items CRUD
+  const addMenuItem = (category, itemName) => {
+    const trimmed = itemName?.trim();
+    if (!trimmed) return false;
+    setMasterMenu(prev => {
+      const existing = prev[category] || [];
+      if (existing.some(item => item.toLowerCase() === trimmed.toLowerCase())) {
+        return prev;
+      }
+      return {
+        ...prev,
+        [category]: [...existing, trimmed]
+      };
+    });
+    return true;
+  };
+
+  const updateMenuItem = (category, oldName, newName) => {
+    const trimmed = newName?.trim();
+    if (!trimmed) return false;
+    setMasterMenu(prev => {
+      const existing = prev[category] || [];
+      return {
+        ...prev,
+        [category]: existing.map(item => item === oldName ? trimmed : item)
+      };
+    });
+    return true;
+  };
+
+  const deleteMenuItem = (category, itemName) => {
+    setMasterMenu(prev => {
+      const existing = prev[category] || [];
+      return {
+        ...prev,
+        [category]: existing.filter(item => item !== itemName)
+      };
+    });
+  };
+
+  const resetMasterMenu = () => {
+    setMasterMenu(MASTER_MENU);
+    localStorage.removeItem('sdc_master_menu');
+  };
+
   // Reset to original factory defaults
   const resetToFactoryDefaults = () => {
     setPackages(INITIAL_PACKAGES);
     setProducts(INITIAL_PRODUCTS);
     setGallery(INITIAL_GALLERY);
     setPortfolio(INITIAL_PORTFOLIO);
+    setMasterMenu(MASTER_MENU);
     localStorage.removeItem('sdc_packages');
     localStorage.removeItem('sdc_products');
     localStorage.removeItem('sdc_gallery');
     localStorage.removeItem('sdc_portfolio');
+    localStorage.removeItem('sdc_master_menu');
   };
 
   // Helper to open quote modal with pre-selected package
@@ -261,6 +318,11 @@ export const CateringProvider = ({ children }) => {
       removeFromCart,
       updateCartQuantity,
       clearCart,
+      masterMenu,
+      addMenuItem,
+      updateMenuItem,
+      deleteMenuItem,
+      resetMasterMenu,
       isCartOpen,
       setIsCartOpen,
       inquiryModalOpen,

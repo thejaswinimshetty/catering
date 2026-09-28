@@ -17,7 +17,13 @@ import {
   RotateCcw, 
   ArrowLeft, 
   Phone, 
-  CheckCircle2 
+  CheckCircle2,
+  BookOpen,
+  Wine,
+  Utensils,
+  Soup,
+  IceCream,
+  Search
 } from 'lucide-react';
 
 export const AdminPortal = () => {
@@ -40,6 +46,11 @@ export const AdminPortal = () => {
     inquiries, 
     updateInquiryStatus, 
     deleteInquiry,
+    masterMenu,
+    addMenuItem,
+    updateMenuItem,
+    deleteMenuItem,
+    resetMasterMenu,
     resetToFactoryDefaults
   } = useCatering();
 
@@ -97,6 +108,59 @@ export const AdminPortal = () => {
   const showNotice = (msg) => {
     setNotice(msg);
     setTimeout(() => setNotice(null), 3500);
+  };
+
+  // Menu Items Manager State & Handlers
+  const [menuCourseFilter, setMenuCourseFilter] = useState('all');
+  const [menuSearch, setMenuSearch] = useState('');
+  const [newItemCourse, setNewItemCourse] = useState('welcomeDrinks');
+  const [newItemName, setNewItemName] = useState('');
+  const [editingItemKey, setEditingItemKey] = useState(null);
+  const [editingItemValue, setEditingItemValue] = useState('');
+
+  const handleAddNewMenuItem = (e) => {
+    e?.preventDefault();
+    const trimmed = newItemName.trim();
+    if (!trimmed) {
+      showNotice('Please enter a dish name.');
+      return;
+    }
+    const success = addMenuItem(newItemCourse, trimmed);
+    if (success) {
+      showNotice(`Added "${trimmed}" to menu!`);
+      setNewItemName('');
+    } else {
+      showNotice(`Item "${trimmed}" already exists in this course.`);
+    }
+  };
+
+  const startEditMenuItem = (category, name) => {
+    setEditingItemKey({ category, oldName: name });
+    setEditingItemValue(name);
+  };
+
+  const handleSaveEditMenuItem = (category, oldName) => {
+    const trimmed = editingItemValue.trim();
+    if (!trimmed) {
+      showNotice('Item name cannot be empty.');
+      return;
+    }
+    updateMenuItem(category, oldName, trimmed);
+    setEditingItemKey(null);
+    setEditingItemValue('');
+    showNotice(`Updated to "${trimmed}".`);
+  };
+
+  const handleCancelEditMenuItem = () => {
+    setEditingItemKey(null);
+    setEditingItemValue('');
+  };
+
+  const handleDeleteMenuItem = (category, itemName) => {
+    if (window.confirm(`Are you sure you want to remove "${itemName}" from the menu?`)) {
+      deleteMenuItem(category, itemName);
+      showNotice(`"${itemName}" removed from menu.`);
+    }
   };
 
   const handleLogin = (e) => {
@@ -452,47 +516,62 @@ export const AdminPortal = () => {
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-8 py-8 space-y-8">
         
         {/* Metric Cards Row in Warm Cream & Gold */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="bg-[#ffffff] p-5 rounded-2xl border-2 border-[#d4af37]/40 shadow-md flex items-center justify-between">
-            <div>
-              <div className="text-xs text-stone-500 uppercase font-bold">Packages</div>
-              <div className="font-royal text-2xl font-extrabold text-[#0d2e24]">{packages.length}</div>
-            </div>
-            <div className="w-10 h-10 rounded-xl bg-[#0d2e24] flex items-center justify-center text-[#f5d77f]">
-              <Package className="w-5 h-5" />
-            </div>
-          </div>
+        {(() => {
+          const totalMasterMenuItems = Object.values(masterMenu || {}).reduce((acc, arr) => acc + (arr?.length || 0), 0);
+          return (
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+              <div className="bg-[#ffffff] p-5 rounded-2xl border-2 border-[#d4af37]/40 shadow-md flex items-center justify-between">
+                <div>
+                  <div className="text-xs text-stone-500 uppercase font-bold">Packages</div>
+                  <div className="font-royal text-2xl font-extrabold text-[#0d2e24]">{packages.length}</div>
+                </div>
+                <div className="w-10 h-10 rounded-xl bg-[#0d2e24] flex items-center justify-center text-[#f5d77f]">
+                  <Package className="w-5 h-5" />
+                </div>
+              </div>
 
-          <div className="bg-[#ffffff] p-5 rounded-2xl border-2 border-[#d4af37]/40 shadow-md flex items-center justify-between">
-            <div>
-              <div className="text-xs text-stone-500 uppercase font-bold">Products</div>
-              <div className="font-royal text-2xl font-extrabold text-[#0d2e24]">{products.length}</div>
-            </div>
-            <div className="w-10 h-10 rounded-xl bg-[#0d2e24] flex items-center justify-center text-[#f5d77f]">
-              <ShoppingBag className="w-5 h-5" />
-            </div>
-          </div>
+              <div className="bg-[#ffffff] p-5 rounded-2xl border-2 border-[#d4af37]/40 shadow-md flex items-center justify-between">
+                <div>
+                  <div className="text-xs text-stone-500 uppercase font-bold">Menu Dishes</div>
+                  <div className="font-royal text-2xl font-extrabold text-[#0d2e24]">{totalMasterMenuItems}</div>
+                </div>
+                <div className="w-10 h-10 rounded-xl bg-[#0d2e24] flex items-center justify-center text-[#f5d77f]">
+                  <BookOpen className="w-5 h-5" />
+                </div>
+              </div>
 
-          <div className="bg-[#ffffff] p-5 rounded-2xl border-2 border-[#d4af37]/40 shadow-md flex items-center justify-between">
-            <div>
-              <div className="text-xs text-stone-500 uppercase font-bold">Gallery Photos</div>
-              <div className="font-royal text-2xl font-extrabold text-[#0d2e24]">{gallery.length}</div>
-            </div>
-            <div className="w-10 h-10 rounded-xl bg-[#0d2e24] flex items-center justify-center text-[#f5d77f]">
-              <ImageIcon className="w-5 h-5" />
-            </div>
-          </div>
+              <div className="bg-[#ffffff] p-5 rounded-2xl border-2 border-[#d4af37]/40 shadow-md flex items-center justify-between">
+                <div>
+                  <div className="text-xs text-stone-500 uppercase font-bold">Products</div>
+                  <div className="font-royal text-2xl font-extrabold text-[#0d2e24]">{products.length}</div>
+                </div>
+                <div className="w-10 h-10 rounded-xl bg-[#0d2e24] flex items-center justify-center text-[#f5d77f]">
+                  <ShoppingBag className="w-5 h-5" />
+                </div>
+              </div>
 
-          <div className="bg-[#ffffff] p-5 rounded-2xl border-2 border-[#d4af37]/40 shadow-md flex items-center justify-between">
-            <div>
-              <div className="text-xs text-stone-500 uppercase font-bold">Customer Leads</div>
-              <div className="font-royal text-2xl font-extrabold text-[#0d2e24]">{inquiries.length}</div>
+              <div className="bg-[#ffffff] p-5 rounded-2xl border-2 border-[#d4af37]/40 shadow-md flex items-center justify-between">
+                <div>
+                  <div className="text-xs text-stone-500 uppercase font-bold">Gallery Photos</div>
+                  <div className="font-royal text-2xl font-extrabold text-[#0d2e24]">{gallery.length}</div>
+                </div>
+                <div className="w-10 h-10 rounded-xl bg-[#0d2e24] flex items-center justify-center text-[#f5d77f]">
+                  <ImageIcon className="w-5 h-5" />
+                </div>
+              </div>
+
+              <div className="bg-[#ffffff] p-5 rounded-2xl border-2 border-[#d4af37]/40 shadow-md flex items-center justify-between">
+                <div>
+                  <div className="text-xs text-stone-500 uppercase font-bold">Customer Leads</div>
+                  <div className="font-royal text-2xl font-extrabold text-[#0d2e24]">{inquiries.length}</div>
+                </div>
+                <div className="w-10 h-10 rounded-xl bg-[#0d2e24] flex items-center justify-center text-[#f5d77f]">
+                  <Inbox className="w-5 h-5" />
+                </div>
+              </div>
             </div>
-            <div className="w-10 h-10 rounded-xl bg-[#0d2e24] flex items-center justify-center text-[#f5d77f]">
-              <Inbox className="w-5 h-5" />
-            </div>
-          </div>
-        </div>
+          );
+        })()}
 
         {/* Tab Switcher */}
         <div className="flex flex-wrap items-center gap-2 border-b-2 border-[#d4af37]/30 pb-4">
@@ -506,6 +585,18 @@ export const AdminPortal = () => {
           >
             <Package className="w-4 h-4" />
             <span>Manage Packages ({packages.length})</span>
+          </button>
+
+          <button
+            onClick={() => setAdminTab('menu')}
+            className={`px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 cursor-pointer ${
+              adminTab === 'menu'
+                ? 'bg-[#0d2e24] text-[#f5d77f] border-2 border-[#d4af37] shadow-md'
+                : 'bg-[#ffffff] text-stone-700 hover:text-[#0d2e24] border border-[#d4af37]/40'
+            }`}
+          >
+            <BookOpen className="w-4 h-4" />
+            <span>Master Menu Dishes ({Object.values(masterMenu || {}).reduce((acc, arr) => acc + (arr?.length || 0), 0)})</span>
           </button>
 
           <button
@@ -870,7 +961,316 @@ export const AdminPortal = () => {
           </div>
         )}
 
-        {/* TAB 5: SETTINGS & RESTORE */}
+        {/* TAB 5: MASTER MENU ITEMS CRUD */}
+        {adminTab === 'menu' && (
+          <div className="space-y-8">
+            {/* Header & Quick Add Dish Card */}
+            <div className="bg-[#ffffff] rounded-3xl border-2 border-[#d4af37]/50 p-6 sm:p-8 shadow-xl space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0d2e24] text-[#f5d77f] text-[11px] font-bold uppercase tracking-wider mb-2">
+                    <BookOpen className="w-3.5 h-3.5 text-[#e5c158]" />
+                    <span>Master Catalog • {Object.values(masterMenu || {}).reduce((acc, arr) => acc + (arr?.length || 0), 0)} Total Dishes</span>
+                  </div>
+                  <h3 className="font-royal text-2xl font-bold text-[#0d2e24]">
+                    Master Menu Items Manager
+                  </h3>
+                  <p className="text-xs text-stone-600 max-w-2xl">
+                    Add new dishes, edit dish names, or delete items across all 4 courses. Any update made here immediately updates the public Menu list and customer package customizer in real time!
+                  </p>
+                </div>
+
+                <button
+                  onClick={() => {
+                    if (window.confirm('Reset Master Menu items to authentic factory defaults? Any custom added items will be replaced.')) {
+                      resetMasterMenu();
+                      showNotice('Master Menu restored to factory authentic items!');
+                    }
+                  }}
+                  className="px-4 py-2 rounded-xl text-xs font-bold text-[#0d2e24] bg-[#faf5eb] hover:bg-[#ede1c7] border border-[#d4af37] transition-colors flex items-center gap-1.5 cursor-pointer shadow-sm shrink-0"
+                >
+                  <RotateCcw className="w-3.5 h-3.5 text-[#996e14]" />
+                  <span>Restore Default Menu</span>
+                </button>
+              </div>
+
+              {/* Add New Item Form */}
+              <form onSubmit={handleAddNewMenuItem} className="bg-[#faf6ee] p-5 sm:p-6 rounded-2xl border border-[#d4af37]/40 space-y-4">
+                <h4 className="font-bold text-xs uppercase tracking-wider text-[#0d2e24] flex items-center gap-2">
+                  <Plus className="w-4 h-4 text-[#c59b27]" />
+                  <span>Add New Dish to Master Menu</span>
+                </h4>
+
+                <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 items-end">
+                  <div className="sm:col-span-4 space-y-1">
+                    <label className="text-xs font-bold text-stone-700">Select Course Category *</label>
+                    <select
+                      value={newItemCourse}
+                      onChange={(e) => setNewItemCourse(e.target.value)}
+                      className="w-full bg-white border border-[#d4af37]/60 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm font-semibold text-[#0d2e24] focus:outline-none focus:border-[#d4af37] shadow-sm"
+                    >
+                      <option value="welcomeDrinks">1. Welcome Drinks & Coolers</option>
+                      <option value="starters">2. Starters & Crispy Appetizers</option>
+                      <option value="mainCourse">3. Main Course Delicacies</option>
+                      <option value="desserts">4. Desserts, Sweets & Filter Coffee</option>
+                    </select>
+                  </div>
+
+                  <div className="sm:col-span-6 space-y-1">
+                    <label className="text-xs font-bold text-stone-700">Dish Name *</label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g. Jackfruit Payasam, Vazhaipoo Cutlet, Seeraga Samba Briyani..."
+                      value={newItemName}
+                      onChange={(e) => setNewItemName(e.target.value)}
+                      className="w-full bg-white border border-[#d4af37]/60 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-[#0d2e24] focus:outline-none focus:border-[#d4af37] shadow-sm"
+                    />
+                  </div>
+
+                  <div className="sm:col-span-2">
+                    <button
+                      type="submit"
+                      className="w-full gold-button-gradient font-bold py-2.5 px-4 rounded-xl text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 cursor-pointer shadow-md text-[#0d2e24]"
+                    >
+                      <Plus className="w-4 h-4" />
+                      <span>Add Dish</span>
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+
+            {/* Filter & Search Bar */}
+            <div className="bg-white p-4 sm:p-5 rounded-2xl border-2 border-[#d4af37]/40 shadow-md flex flex-col md:flex-row items-center justify-between gap-3">
+              <div className="relative w-full md:w-80">
+                <Search className="w-4 h-4 text-[#996e14] absolute left-3.5 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  placeholder="Filter menu dishes..."
+                  value={menuSearch}
+                  onChange={(e) => setMenuSearch(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 bg-[#faf6ee] border border-[#d4af37]/40 rounded-xl text-xs text-[#0d2e24] focus:outline-none focus:border-[#d4af37]"
+                />
+              </div>
+
+              <div className="flex flex-wrap items-center gap-1.5 w-full md:w-auto">
+                <button
+                  onClick={() => setMenuCourseFilter('all')}
+                  className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                    menuCourseFilter === 'all'
+                      ? 'bg-[#0d2e24] text-[#f5d77f] border border-[#d4af37]'
+                      : 'bg-[#faf6ee] text-stone-700 hover:text-[#0d2e24]'
+                  }`}
+                >
+                  All Courses ({Object.values(masterMenu || {}).reduce((acc, arr) => acc + (arr?.length || 0), 0)})
+                </button>
+                <button
+                  onClick={() => setMenuCourseFilter('welcomeDrinks')}
+                  className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                    menuCourseFilter === 'welcomeDrinks'
+                      ? 'bg-[#0d2e24] text-[#f5d77f] border border-[#d4af37]'
+                      : 'bg-[#faf6ee] text-stone-700 hover:text-[#0d2e24]'
+                  }`}
+                >
+                  Drinks ({(masterMenu?.welcomeDrinks || []).length})
+                </button>
+                <button
+                  onClick={() => setMenuCourseFilter('starters')}
+                  className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                    menuCourseFilter === 'starters'
+                      ? 'bg-[#0d2e24] text-[#f5d77f] border border-[#d4af37]'
+                      : 'bg-[#faf6ee] text-stone-700 hover:text-[#0d2e24]'
+                  }`}
+                >
+                  Starters ({(masterMenu?.starters || []).length})
+                </button>
+                <button
+                  onClick={() => setMenuCourseFilter('mainCourse')}
+                  className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                    menuCourseFilter === 'mainCourse'
+                      ? 'bg-[#0d2e24] text-[#f5d77f] border border-[#d4af37]'
+                      : 'bg-[#faf6ee] text-stone-700 hover:text-[#0d2e24]'
+                  }`}
+                >
+                  Main Course ({(masterMenu?.mainCourse || []).length})
+                </button>
+                <button
+                  onClick={() => setMenuCourseFilter('desserts')}
+                  className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                    menuCourseFilter === 'desserts'
+                      ? 'bg-[#0d2e24] text-[#f5d77f] border border-[#d4af37]'
+                      : 'bg-[#faf6ee] text-stone-700 hover:text-[#0d2e24]'
+                  }`}
+                >
+                  Desserts ({(masterMenu?.desserts || []).length})
+                </button>
+              </div>
+            </div>
+
+            {/* Courses Management Grids */}
+            <div className="space-y-6">
+              {[
+                {
+                  key: 'welcomeDrinks',
+                  title: 'Welcome Drinks & Coolers',
+                  icon: Wine,
+                  badgeBg: 'bg-blue-100 text-blue-900 border-blue-300',
+                  items: masterMenu?.welcomeDrinks || []
+                },
+                {
+                  key: 'starters',
+                  title: 'Starters & Crispy Appetizers',
+                  icon: Utensils,
+                  badgeBg: 'bg-amber-100 text-amber-900 border-amber-300',
+                  items: masterMenu?.starters || []
+                },
+                {
+                  key: 'mainCourse',
+                  title: 'Main Course & Banana Leaf Feast',
+                  icon: Soup,
+                  badgeBg: 'bg-emerald-100 text-emerald-900 border-emerald-300',
+                  items: masterMenu?.mainCourse || []
+                },
+                {
+                  key: 'desserts',
+                  title: 'Desserts, Sweets & Brass Filter Kaapi',
+                  icon: IceCream,
+                  badgeBg: 'bg-rose-100 text-rose-900 border-rose-300',
+                  items: masterMenu?.desserts || []
+                }
+              ]
+                .filter(cat => menuCourseFilter === 'all' || menuCourseFilter === cat.key)
+                .map(cat => {
+                  const Icon = cat.icon;
+                  const displayItems = cat.items.filter(item =>
+                    item.toLowerCase().includes(menuSearch.toLowerCase().trim())
+                  );
+
+                  return (
+                    <div 
+                      key={cat.key}
+                      className="bg-[#ffffff] rounded-3xl border-2 border-[#d4af37]/40 overflow-hidden shadow-lg"
+                    >
+                      {/* Course Header */}
+                      <div className="bg-[#0d2e24] text-[#faf5ea] px-6 py-4 flex items-center justify-between border-b-2 border-[#d4af37]/40">
+                        <div className="flex items-center gap-3">
+                          <div className="w-9 h-9 rounded-xl bg-[#faf5ea]/10 border border-[#d4af37] flex items-center justify-center text-[#f5d77f]">
+                            <Icon className="w-4 h-4 text-[#f5d77f]" />
+                          </div>
+                          <div>
+                            <h4 className="font-royal text-lg font-bold text-white leading-tight">
+                              {cat.title}
+                            </h4>
+                            <span className="text-[11px] text-[#cfc5b0]">
+                              {cat.items.length} dishes in this course
+                            </span>
+                          </div>
+                        </div>
+
+                        <button
+                          onClick={() => {
+                            setNewItemCourse(cat.key);
+                            window.scrollTo({ top: 180, behavior: 'smooth' });
+                          }}
+                          className="px-3 py-1.5 rounded-xl bg-[#faf5ea]/10 hover:bg-[#faf5ea]/20 text-[#f5d77f] border border-[#d4af37]/40 text-xs font-bold transition-colors cursor-pointer flex items-center gap-1.5"
+                        >
+                          <Plus className="w-3.5 h-3.5" />
+                          <span>Add to this course</span>
+                        </button>
+                      </div>
+
+                      {/* Items Grid */}
+                      <div className="p-6">
+                        {displayItems.length === 0 ? (
+                          <div className="text-center py-8 text-stone-400 text-xs">
+                            No dishes found matching your search.
+                          </div>
+                        ) : (
+                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                            {displayItems.map((item, idx) => {
+                              const isEditing = editingItemKey?.category === cat.key && editingItemKey?.oldName === item;
+
+                              return (
+                                <div
+                                  key={idx}
+                                  className={`p-3.5 rounded-2xl border transition-all flex items-center justify-between gap-2.5 ${
+                                    isEditing 
+                                      ? 'bg-amber-50 border-amber-400 shadow-md ring-2 ring-amber-300' 
+                                      : 'bg-[#faf8f2] border-[#d4af37]/40 hover:border-[#d4af37] hover:bg-white hover:shadow-sm'
+                                  }`}
+                                >
+                                  {isEditing ? (
+                                    <div className="flex-1 flex items-center gap-2">
+                                      <input
+                                        type="text"
+                                        autoFocus
+                                        value={editingItemValue}
+                                        onChange={(e) => setEditingItemValue(e.target.value)}
+                                        onKeyDown={(e) => {
+                                          if (e.key === 'Enter') handleSaveEditMenuItem(cat.key, item);
+                                          if (e.key === 'Escape') handleCancelEditMenuItem();
+                                        }}
+                                        className="w-full bg-white border border-[#d4af37] rounded-lg px-2.5 py-1.5 text-xs text-[#0d2e24] font-semibold focus:outline-none"
+                                      />
+                                      <button
+                                        onClick={() => handleSaveEditMenuItem(cat.key, item)}
+                                        className="p-1.5 bg-green-600 hover:bg-green-700 text-white rounded-lg cursor-pointer shrink-0"
+                                        title="Save Changes"
+                                      >
+                                        <Check className="w-3.5 h-3.5" />
+                                      </button>
+                                      <button
+                                        onClick={handleCancelEditMenuItem}
+                                        className="p-1.5 bg-stone-300 hover:bg-stone-400 text-stone-800 rounded-lg cursor-pointer shrink-0"
+                                        title="Cancel"
+                                      >
+                                        <X className="w-3.5 h-3.5" />
+                                      </button>
+                                    </div>
+                                  ) : (
+                                    <>
+                                      <div className="flex items-center gap-2.5 min-w-0">
+                                        <span className="w-5 h-5 rounded-full bg-[#0d2e24] text-[#f5d77f] text-[9px] font-bold flex items-center justify-center shrink-0">
+                                          {idx + 1}
+                                        </span>
+                                        <span className="text-xs sm:text-sm font-semibold text-[#0d2e24] truncate">
+                                          {item}
+                                        </span>
+                                      </div>
+
+                                      <div className="flex items-center gap-1 shrink-0">
+                                        <button
+                                          onClick={() => startEditMenuItem(cat.key, item)}
+                                          className="p-1.5 text-stone-500 hover:text-[#0d2e24] hover:bg-white rounded-lg transition-colors cursor-pointer"
+                                          title={`Edit "${item}"`}
+                                        >
+                                          <Edit3 className="w-3.5 h-3.5" />
+                                        </button>
+                                        <button
+                                          onClick={() => handleDeleteMenuItem(cat.key, item)}
+                                          className="p-1.5 text-stone-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
+                                          title={`Delete "${item}"`}
+                                        >
+                                          <Trash2 className="w-3.5 h-3.5" />
+                                        </button>
+                                      </div>
+                                    </>
+                                  )}
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+            </div>
+          </div>
+        )}
+
+        {/* TAB 6: SETTINGS & RESTORE */}
         {adminTab === 'settings' && (
           <div className="bg-[#ffffff] p-8 rounded-3xl border-2 border-[#d4af37]/40 max-w-2xl mx-auto space-y-6 shadow-xl">
             <div className="space-y-1 text-center">
