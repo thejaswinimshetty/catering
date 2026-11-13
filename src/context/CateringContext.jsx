@@ -7,6 +7,7 @@ import {
   COMPANY_INFO,
   MASTER_MENU
 } from '../data/initialData';
+import { CATERING_CATEGORIES } from '../data/cateringMenuData';
 
 const CateringContext = createContext(null);
 
@@ -14,9 +15,7 @@ export const CateringProvider = ({ children }) => {
   // Navigation & View State
   const [activeTab, setActiveTab] = useState('home'); // 'home' | 'services' | 'gallery' | 'products' | 'portfolio'
   const [isAdminMode, setIsAdminMode] = useState(false);
-  const [adminAuth, setAdminAuth] = useState(() => {
-    return localStorage.getItem('sdc_admin_auth') === 'true';
-  });
+  const [adminAuth, setAdminAuth] = useState(false);
 
   // Data States with LocalStorage Persistence
   const [packages, setPackages] = useState(() => {
@@ -68,10 +67,112 @@ export const CateringProvider = ({ children }) => {
     return saved ? JSON.parse(saved) : MASTER_MENU;
   });
 
+  // Dynamic Catering Categories & Dishes (Editable from Admin)
+  const [categories, setCategories] = useState(() => {
+    const saved = localStorage.getItem('sdc_categories');
+    return saved ? JSON.parse(saved) : CATERING_CATEGORIES;
+  });
+
+  useEffect(() => {
+    localStorage.setItem('sdc_categories', JSON.stringify(categories));
+  }, [categories]);
+
+  const addCategory = (newCat) => {
+    const id = newCat.id || newCat.name.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-');
+    const categoryToAdd = {
+      id,
+      name: newCat.name.trim(),
+      group: newCat.group || 'starters',
+      page: newCat.page || 'Custom Menu',
+      description: newCat.description?.trim() || 'Authentic pure vegetarian culinary delicacies.',
+      image: newCat.image?.trim() || '',
+      items: Array.isArray(newCat.items) ? newCat.items : []
+    };
+    setCategories(prev => [categoryToAdd, ...prev]);
+    return categoryToAdd;
+  };
+
+  const updateCategory = (id, updated) => {
+    setCategories(prev => prev.map(cat => cat.id === id ? { ...cat, ...updated } : cat));
+  };
+
+  const deleteCategory = (id) => {
+    setCategories(prev => prev.filter(cat => cat.id !== id));
+  };
+
+  const addDishToCategory = (categoryId, dishName) => {
+    if (!dishName || !dishName.trim()) return;
+    const trimmed = dishName.trim();
+    setCategories(prev => prev.map(cat => {
+      if (cat.id === categoryId) {
+        if (cat.items.includes(trimmed)) return cat;
+        return { ...cat, items: [...cat.items, trimmed] };
+      }
+      return cat;
+    }));
+  };
+
+  const updateDishInCategory = (categoryId, oldDishName, newDishName) => {
+    if (!newDishName || !newDishName.trim()) return;
+    const trimmed = newDishName.trim();
+    setCategories(prev => prev.map(cat => {
+      if (cat.id === categoryId) {
+        return {
+          ...cat,
+          items: cat.items.map(dish => dish === oldDishName ? trimmed : dish)
+        };
+      }
+      return cat;
+    }));
+  };
+
+  const deleteDishFromCategory = (categoryId, dishName) => {
+    setCategories(prev => prev.map(cat => {
+      if (cat.id === categoryId) {
+        return {
+          ...cat,
+          items: cat.items.filter(dish => dish !== dishName)
+        };
+      }
+      return cat;
+    }));
+  };
+
+  const resetCategoriesToDefault = () => {
+    setCategories(CATERING_CATEGORIES);
+    localStorage.setItem('sdc_categories', JSON.stringify(CATERING_CATEGORIES));
+  };
+
   // Modal States
   const [inquiryModalOpen, setInquiryModalOpen] = useState(false);
   const [selectedPackageForQuote, setSelectedPackageForQuote] = useState(null);
   const [isCartOpen, setIsCartOpen] = useState(false);
+
+  // Custom Package Selected Dishes (synced across menu explorer & inquiry customizer)
+  const [customDishes, setCustomDishes] = useState(() => {
+    const saved = localStorage.getItem('sdc_custom_dishes');
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  // Sync custom dishes to LocalStorage
+  useEffect(() => {
+    localStorage.setItem('sdc_custom_dishes', JSON.stringify(customDishes));
+  }, [customDishes]);
+
+  const toggleCustomDish = (dishName, categoryName) => {
+    setCustomDishes(prev => {
+      const exists = prev.some(item => item.name === dishName);
+      if (exists) {
+        return prev.filter(item => item.name !== dishName);
+      } else {
+        return [...prev, { name: dishName, category: categoryName }];
+      }
+    });
+  };
+
+  const clearCustomDishes = () => {
+    setCustomDishes([]);
+  };
 
   // Sync to LocalStorage
   useEffect(() => {
@@ -103,8 +204,8 @@ export const CateringProvider = ({ children }) => {
   }, [masterMenu]);
 
   useEffect(() => {
-    localStorage.setItem('sdc_admin_auth', adminAuth ? 'true' : 'false');
-  }, [adminAuth]);
+    localStorage.removeItem('sdc_admin_auth');
+  }, []);
 
   // Packages CRUD
   const addPackage = (pkg) => {
@@ -330,6 +431,18 @@ export const CateringProvider = ({ children }) => {
       selectedPackageForQuote,
       setSelectedPackageForQuote,
       openQuoteModalForPackage,
+      customDishes,
+      setCustomDishes,
+      toggleCustomDish,
+      clearCustomDishes,
+      categories,
+      addCategory,
+      updateCategory,
+      deleteCategory,
+      addDishToCategory,
+      updateDishInCategory,
+      deleteDishFromCategory,
+      resetCategoriesToDefault,
       resetToFactoryDefaults
     }}>
       {children}

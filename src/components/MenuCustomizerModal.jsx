@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+﻿import React, { useState, useMemo } from 'react';
 import { useCatering } from '../context/CateringContext';
 import {
   X,
@@ -44,10 +44,10 @@ const CATEGORIES = [
     label: 'Main Course',
     number: '3',
     icon: Soup,
-    color: 'text-[#0d2e24]',
-    bg: 'bg-emerald-50',
-    border: 'border-emerald-200',
-    activeBg: 'bg-[#0d2e24]',
+    color: 'text-[#0b1a30]',
+    bg: 'bg-rose-50',
+    border: 'border-rose-200',
+    activeBg: 'bg-[#0b1a30]',
     tip: 'Select main course dishes for the banana leaf / buffet spread.',
   },
   {
@@ -135,14 +135,14 @@ export const MenuCustomizerModal = ({ pkg, onClose }) => {
 
   return (
     <div className="fixed inset-0 z-[200] flex items-center justify-center p-2 sm:p-4 bg-black/60 backdrop-blur-sm" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
-      <div className="bg-[#faf6ee] w-full max-w-2xl max-h-[95vh] rounded-3xl shadow-2xl border-2 border-[#d4af37] flex flex-col overflow-hidden">
+      <div className="bg-[#fcfaf6] w-full max-w-2xl max-h-[95vh] rounded-3xl shadow-2xl border-2 border-[#dfc17b] flex flex-col overflow-hidden">
         
         {/* ── Header ── */}
-        <div className="bg-[#0d2e24] px-6 py-5 flex items-start justify-between shrink-0">
+        <div className="bg-[#0b1a30] px-6 py-5 flex items-start justify-between shrink-0">
           <div>
             <div className="inline-flex items-center gap-2 mb-1">
-              <Sparkles className="w-4 h-4 text-[#f5d77f]" />
-              <span className="text-[#f5d77f] text-xs font-bold uppercase tracking-widest">Customize Your Menu</span>
+              <Sparkles className="w-4 h-4 text-[#f3e9d2]" />
+              <span className="text-[#f3e9d2] text-xs font-bold uppercase tracking-widest">Customize Your Menu</span>
             </div>
             <h2 className="font-royal text-xl sm:text-2xl font-bold text-white leading-tight">
               {pkg ? pkg.name : 'Build Your Own Menu'}
@@ -160,36 +160,36 @@ export const MenuCustomizerModal = ({ pkg, onClose }) => {
         <div className="overflow-y-auto flex-1 px-4 sm:px-6 py-5 space-y-4">
 
           {/* Guest details */}
-          <div className="bg-white rounded-2xl border border-[#d4af37]/40 p-4 space-y-3">
-            <h3 className="text-xs font-bold uppercase tracking-widest text-[#0d2e24]">Your Event Details <span className="text-stone-400 font-normal normal-case">(optional)</span></h3>
+          <div className="bg-white rounded-2xl border border-[#dfc17b]/40 p-4 space-y-3">
+            <h3 className="text-xs font-bold uppercase tracking-widest text-[#0b1a30]">Your Event Details <span className="text-stone-400 font-normal normal-case">(optional)</span></h3>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <input
                 type="text"
                 placeholder="Your Name"
                 value={guestName}
                 onChange={e => setGuestName(e.target.value)}
-                className="border border-[#d4af37]/50 rounded-xl px-3 py-2 text-sm bg-[#faf5eb] text-[#1a2d24] placeholder-stone-400 focus:outline-none focus:border-[#d4af37]"
+                className="border border-[#dfc17b]/50 rounded-xl px-3 py-2 text-sm bg-[#fcfaf6] text-[#0b1a30] placeholder-stone-400 focus:outline-none focus:border-[#dfc17b]"
               />
               <input
                 type="number"
                 placeholder="Guest Count"
                 value={guestCount}
                 onChange={e => setGuestCount(e.target.value)}
-                className="border border-[#d4af37]/50 rounded-xl px-3 py-2 text-sm bg-[#faf5eb] text-[#1a2d24] placeholder-stone-400 focus:outline-none focus:border-[#d4af37]"
+                className="border border-[#dfc17b]/50 rounded-xl px-3 py-2 text-sm bg-[#fcfaf6] text-[#0b1a30] placeholder-stone-400 focus:outline-none focus:border-[#dfc17b]"
               />
               <input
                 type="date"
                 value={eventDate}
                 onChange={e => setEventDate(e.target.value)}
-                className="border border-[#d4af37]/50 rounded-xl px-3 py-2 text-sm bg-[#faf5eb] text-[#1a2d24] focus:outline-none focus:border-[#d4af37]"
+                className="border border-[#dfc17b]/50 rounded-xl px-3 py-2 text-sm bg-[#fcfaf6] text-[#0b1a30] focus:outline-none focus:border-[#dfc17b]"
               />
             </div>
           </div>
 
           {/* Selection Counter */}
           <div className="flex items-center gap-3 px-1">
-            <div className="flex items-center gap-2 text-sm text-[#0d2e24] font-bold">
-              <ShoppingBag className="w-4 h-4 text-[#c59b27]" />
+            <div className="flex items-center gap-2 text-sm text-[#0b1a30] font-bold">
+              <ShoppingBag className="w-4 h-4 text-[#cbb079]" />
               <span>{totalSelected} item{totalSelected !== 1 ? 's' : ''} selected</span>
             </div>
             <span className="text-stone-400 text-xs">— Tap categories below to expand and choose items</span>
@@ -203,29 +203,29 @@ export const MenuCustomizerModal = ({ pkg, onClose }) => {
             const selected = selections[cat.key];
 
             return (
-              <div key={cat.key} className={`rounded-2xl border-2 overflow-hidden transition-all ${isOpen ? 'border-[#d4af37]' : 'border-[#d4af37]/30'}`}>
+              <div key={cat.key} className={`rounded-2xl border-2 overflow-hidden transition-all ${isOpen ? 'border-[#dfc17b]' : 'border-[#dfc17b]/30'}`}>
                 {/* Accordion Header */}
                 <button
                   onClick={() => toggleCategory(cat.key)}
-                  className={`w-full flex items-center justify-between px-4 py-3.5 cursor-pointer transition-colors ${isOpen ? 'bg-[#0d2e24]' : 'bg-white hover:bg-[#faf5eb]'}`}
+                  className={`w-full flex items-center justify-between px-4 py-3.5 cursor-pointer transition-colors ${isOpen ? 'bg-[#0b1a30]' : 'bg-white hover:bg-[#fcfaf6]'}`}
                 >
                   <div className="flex items-center gap-3">
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white shrink-0 ${isOpen ? 'bg-[#d4af37]' : 'bg-[#0d2e24]'}`}>
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white shrink-0 ${isOpen ? 'bg-[#dfc17b]' : 'bg-[#0b1a30]'}`}>
                       <Icon className="w-4 h-4" />
                     </div>
                     <div className="text-left">
-                      <div className={`font-bold text-sm ${isOpen ? 'text-white' : 'text-[#0d2e24]'}`}>
+                      <div className={`font-bold text-sm ${isOpen ? 'text-white' : 'text-[#0b1a30]'}`}>
                         {cat.number}. {cat.label}
                       </div>
                       <div className={`text-[11px] ${isOpen ? 'text-[#c8b87a]' : 'text-stone-500'}`}>
                         {(currentMenu[cat.key] || []).length} items available
-                        {selected.length > 0 && <span className="ml-2 font-bold text-[#d4af37]">• {selected.length} selected</span>}
+                        {selected.length > 0 && <span className="ml-2 font-bold text-[#dfc17b]">• {selected.length} selected</span>}
                       </div>
                     </div>
                   </div>
-                  <div className={`flex items-center gap-2 ${isOpen ? 'text-[#f5d77f]' : 'text-[#0d2e24]'}`}>
+                  <div className={`flex items-center gap-2 ${isOpen ? 'text-[#f3e9d2]' : 'text-[#0b1a30]'}`}>
                     {selected.length > 0 && !isOpen && (
-                      <span className="bg-[#d4af37] text-[#0d2e24] text-[10px] font-extrabold px-2 py-0.5 rounded-full">{selected.length}</span>
+                      <span className="bg-[#dfc17b] text-[#0b1a30] text-[10px] font-extrabold px-2 py-0.5 rounded-full">{selected.length}</span>
                     )}
                     {isOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                   </div>
@@ -241,7 +241,7 @@ export const MenuCustomizerModal = ({ pkg, onClose }) => {
                       placeholder={`Search ${cat.label.toLowerCase()}...`}
                       value={searchTerms[cat.key]}
                       onChange={e => setSearchTerms(prev => ({ ...prev, [cat.key]: e.target.value }))}
-                      className="w-full border border-[#d4af37]/40 rounded-xl px-3 py-2 text-xs bg-[#faf5eb] text-[#1a2d24] placeholder-stone-400 focus:outline-none focus:border-[#d4af37]"
+                      className="w-full border border-[#dfc17b]/40 rounded-xl px-3 py-2 text-xs bg-[#fcfaf6] text-[#0b1a30] placeholder-stone-400 focus:outline-none focus:border-[#dfc17b]"
                     />
 
                     {/* Item checkboxes */}
@@ -257,14 +257,14 @@ export const MenuCustomizerModal = ({ pkg, onClose }) => {
                             onClick={() => toggleItem(cat.key, item)}
                             className={`flex items-start gap-2.5 text-left px-3 py-2.5 rounded-xl border-2 transition-all cursor-pointer text-xs w-full ${
                               checked
-                                ? 'border-[#d4af37] bg-[#faf5eb] text-[#0d2e24] font-semibold'
-                                : 'border-stone-200 bg-white text-stone-700 hover:border-[#d4af37]/60 hover:bg-[#fdfaf2]'
+                                ? 'border-[#dfc17b] bg-[#fcfaf6] text-[#0b1a30] font-semibold'
+                                : 'border-stone-200 bg-white text-stone-700 hover:border-[#dfc17b]/60 hover:bg-[#fdfaf2]'
                             }`}
                           >
                             <span className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 mt-0.5 transition-colors ${
-                              checked ? 'bg-[#0d2e24] border-[#0d2e24]' : 'bg-white border-stone-300'
+                              checked ? 'bg-[#0b1a30] border-[#0b1a30]' : 'bg-white border-stone-300'
                             }`}>
-                              {checked && <Check className="w-2.5 h-2.5 text-[#f5d77f]" />}
+                              {checked && <Check className="w-2.5 h-2.5 text-[#f3e9d2]" />}
                             </span>
                             <span className="leading-tight">{item}</span>
                           </button>
@@ -274,15 +274,15 @@ export const MenuCustomizerModal = ({ pkg, onClose }) => {
 
                     {/* Selected summary for this category */}
                     {selected.length > 0 && (
-                      <div className="bg-[#faf5eb] border border-[#d4af37]/50 rounded-xl px-3 py-2">
-                        <p className="text-[10px] font-bold uppercase tracking-wider text-[#996e14] mb-1">Your picks:</p>
+                      <div className="bg-[#fcfaf6] border border-[#dfc17b]/50 rounded-xl px-3 py-2">
+                        <p className="text-[10px] font-bold uppercase tracking-wider text-[#8e7235] mb-1">Your picks:</p>
                         <div className="flex flex-wrap gap-1.5">
                           {selected.map((item, i) => (
-                            <span key={i} className="bg-[#0d2e24] text-[#f5d77f] text-[10px] font-semibold px-2 py-0.5 rounded-full flex items-center gap-1">
+                            <span key={i} className="bg-[#0b1a30] text-[#f3e9d2] text-[10px] font-semibold px-2 py-0.5 rounded-full flex items-center gap-1">
                               {item}
                               <button
                                 onClick={(e) => { e.stopPropagation(); toggleItem(cat.key, item); }}
-                                className="text-[#f5d77f]/70 hover:text-white ml-1 leading-none cursor-pointer"
+                                className="text-[#f3e9d2]/70 hover:text-white ml-1 leading-none cursor-pointer"
                               >×</button>
                             </span>
                           ))}
@@ -297,9 +297,9 @@ export const MenuCustomizerModal = ({ pkg, onClose }) => {
 
           {/* Full summary of all selected */}
           {totalSelected > 0 && (
-            <div className="bg-[#0d2e24]/5 border border-[#d4af37]/30 rounded-2xl p-4">
-              <h4 className="text-xs font-bold uppercase tracking-widest text-[#0d2e24] mb-3 flex items-center gap-2">
-                <Sparkles className="w-3.5 h-3.5 text-[#c59b27]" />
+            <div className="bg-[#0b1a30]/5 border border-[#dfc17b]/30 rounded-2xl p-4">
+              <h4 className="text-xs font-bold uppercase tracking-widest text-[#0b1a30] mb-3 flex items-center gap-2">
+                <Sparkles className="w-3.5 h-3.5 text-[#cbb079]" />
                 Your Custom Menu Summary ({totalSelected} items)
               </h4>
               <div className="space-y-2">
@@ -309,13 +309,13 @@ export const MenuCustomizerModal = ({ pkg, onClose }) => {
                   const Icon = cat.icon;
                   return (
                     <div key={cat.key} className="text-xs">
-                      <div className={`flex items-center gap-1.5 font-bold text-[#0d2e24] mb-1`}>
+                      <div className={`flex items-center gap-1.5 font-bold text-[#0b1a30] mb-1`}>
                         <Icon className={`w-3 h-3 ${cat.color}`} />
                         {cat.label}
                       </div>
                       <div className="flex flex-wrap gap-1 ml-4">
                         {items.map((item, i) => (
-                          <span key={i} className="text-[10px] bg-white border border-[#d4af37]/50 px-2 py-0.5 rounded-full text-stone-700">{item}</span>
+                          <span key={i} className="text-[10px] bg-white border border-[#dfc17b]/50 px-2 py-0.5 rounded-full text-stone-700">{item}</span>
                         ))}
                       </div>
                     </div>
@@ -327,10 +327,10 @@ export const MenuCustomizerModal = ({ pkg, onClose }) => {
         </div>
 
         {/* ── Footer Actions ── */}
-        <div className="shrink-0 px-4 sm:px-6 py-4 bg-white border-t border-[#d4af37]/30 flex flex-col sm:flex-row gap-3 items-center justify-between">
+        <div className="shrink-0 px-4 sm:px-6 py-4 bg-white border-t border-[#dfc17b]/30 flex flex-col sm:flex-row gap-3 items-center justify-between">
           {submitted ? (
-            <div className="flex items-center gap-2 text-emerald-700 font-bold text-sm">
-              <Check className="w-5 h-5 text-emerald-600" />
+            <div className="flex items-center gap-2 text-rose-700 font-bold text-sm">
+              <Check className="w-5 h-5 text-rose-600" />
               <span>Request sent via WhatsApp! We'll confirm shortly.</span>
             </div>
           ) : (
@@ -341,13 +341,13 @@ export const MenuCustomizerModal = ({ pkg, onClose }) => {
               <div className="flex gap-2 shrink-0">
                 <button
                   onClick={onClose}
-                  className="px-4 py-2.5 rounded-xl text-sm font-bold text-[#0d2e24] bg-[#faf5eb] border-2 border-[#d4af37]/50 hover:border-[#d4af37] transition-colors cursor-pointer"
+                  className="px-4 py-2.5 rounded-xl text-sm font-bold text-[#0b1a30] bg-[#fcfaf6] border-2 border-[#dfc17b]/50 hover:border-[#dfc17b] transition-colors cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleSendWhatsApp}
-                  className="px-5 py-2.5 rounded-xl text-sm font-bold text-[#0d2e24] gold-button-gradient shadow-md hover:shadow-lg transition-all flex items-center gap-2 cursor-pointer"
+                  className="px-5 py-2.5 rounded-xl text-sm font-bold text-[#0b1a30] gold-button-gradient shadow-md hover:shadow-lg transition-all flex items-center gap-2 cursor-pointer"
                 >
                   <Phone className="w-4 h-4" />
                   Send via WhatsApp

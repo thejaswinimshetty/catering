@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { useCatering } from '../context/CateringContext';
 import { 
   ShoppingBag, 
@@ -22,6 +22,7 @@ export const Navbar = () => {
 
   const navLinks = [
     { id: 'home', label: 'Home' },
+    { id: 'menu', label: 'Catering Menu' },
     { id: 'services', label: 'Services & Packages' },
     { id: 'gallery', label: 'Gallery' },
     { id: 'products', label: 'Artisanal Products' },
@@ -37,7 +38,7 @@ export const Navbar = () => {
   };
 
   return (
-    <header className="sticky top-0 z-40 bg-[#0d2e24] text-[#faf5ea] border-b-2 border-[#d4af37]/60 shadow-xl transition-all">
+    <header className="sticky top-0 z-40 bg-[#0b1a30] text-[#fcfaf6] border-b-2 border-[#dfc17b]/60 shadow-xl transition-all">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           
@@ -46,17 +47,21 @@ export const Navbar = () => {
             onClick={() => handleNavClick('home')}
             className="flex items-center gap-3.5 cursor-pointer group"
           >
-            <div className="w-13 h-13 rounded-full overflow-hidden border-2 border-[#d4af37] shadow-md group-hover:scale-105 transition-transform duration-300 ring-2 ring-[#d4af37]/40 bg-[#082019]">
+            {/* Logo — circular badge filled properly */}
+            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden border-2 border-[#dfc17b] shadow-lg group-hover:scale-105 transition-transform duration-300 ring-2 ring-[#dfc17b]/40 bg-white flex items-center justify-center shrink-0">
               <img 
                 src="/logo.jpg" 
                 alt="South Delicious Catering Logo" 
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover scale-105"
               />
             </div>
 
             <div className="flex flex-col">
-              <span className="font-royal text-xl sm:text-2xl font-bold tracking-wide text-[#fffdf7] group-hover:text-[#f3d37a] transition-colors">
+              <span className="font-royal text-xl sm:text-2xl font-bold tracking-wide text-[#fcfaf6] group-hover:text-[#ebd5a7] transition-colors">
                 South Delicious Catering
+              </span>
+              <span className="text-[11px] text-[#dfc17b] font-medium tracking-widest uppercase hidden sm:block">
+                Pure Veg • Since 2014
               </span>
             </div>
           </div>
@@ -71,13 +76,13 @@ export const Navbar = () => {
                   onClick={() => handleNavClick(link.id)}
                   className={`px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200 cursor-pointer relative ${
                     isActive 
-                      ? 'text-[#0d2e24] bg-[#faf5eb] border border-[#d4af37] shadow-md' 
-                      : 'text-[#f0e7d8] hover:text-[#f3d37a] hover:bg-[#134234]'
+                      ? 'text-[#0b1a30] bg-[#fcfaf6] border border-[#dfc17b] shadow-md' 
+                      : 'text-[#e8dfce] hover:text-[#ebd5a7] hover:bg-[#132a48]'
                   }`}
                 >
                   {link.label}
                   {isActive && (
-                    <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-2 h-1 bg-[#d4af37] rounded-full"></span>
+                    <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-2 h-1 bg-[#dfc17b] rounded-full" />
                   )}
                 </button>
               );
@@ -89,12 +94,12 @@ export const Navbar = () => {
             {/* Cart Button */}
             <button
               onClick={() => setIsCartOpen(true)}
-              className="relative p-2.5 rounded-full text-[#f3d37a] hover:bg-[#144436] border border-[#d4af37]/40 transition-all cursor-pointer bg-[#0a261e]"
+              className="relative p-2.5 rounded-full text-[#ebd5a7] hover:bg-[#132a48] border border-[#dfc17b]/40 transition-all cursor-pointer bg-[#071224]"
               title="View Cart"
             >
               <ShoppingBag className="w-5 h-5" />
               {totalCartCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-red-600 text-white text-[11px] font-bold w-5 h-5 rounded-full flex items-center justify-center animate-bounce shadow">
+                <span className="absolute -top-1 -right-1 bg-rose-500 text-white text-[11px] font-bold w-5 h-5 rounded-full flex items-center justify-center animate-bounce shadow">
                   {totalCartCount}
                 </span>
               )}
@@ -103,19 +108,10 @@ export const Navbar = () => {
             {/* Request Quote Button */}
             <button
               onClick={() => setInquiryModalOpen(true)}
-              className="gold-button-gradient font-bold text-xs sm:text-sm px-5 py-2.5 rounded-full shadow-lg hover:shadow-[#d4af37]/40 transition-all flex items-center gap-1.5 cursor-pointer"
+              className="gold-button-gradient font-bold text-xs sm:text-sm px-5 py-2.5 rounded-full shadow-lg transition-all flex items-center gap-1.5 cursor-pointer"
             >
               <span>Book Catering</span>
               <ChevronRight className="w-4 h-4" />
-            </button>
-
-            {/* Admin Portal Toggle (Discreet) */}
-            <button
-              onClick={() => setIsAdminMode(true)}
-              className="p-2 text-stone-300 hover:text-[#f3d37a] hover:bg-[#144436] rounded-full border border-stone-600/50 transition-all cursor-pointer"
-              title="Admin Portal (Management)"
-            >
-              <Lock className="w-4 h-4" />
             </button>
           </div>
 
@@ -123,18 +119,18 @@ export const Navbar = () => {
           <div className="flex items-center gap-2 lg:hidden">
             <button
               onClick={() => setIsCartOpen(true)}
-              className="relative p-2 text-[#f3d37a]"
+              className="relative p-2 text-[#ebd5a7]"
             >
               <ShoppingBag className="w-5 h-5" />
               {totalCartCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-red-600 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center">
+                <span className="absolute -top-1 -right-1 bg-rose-500 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center">
                   {totalCartCount}
                 </span>
               )}
             </button>
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 text-[#faf5ea] hover:text-[#f3d37a] cursor-pointer"
+              className="p-2 text-[#fcfaf6] hover:text-[#ebd5a7] cursor-pointer"
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
@@ -145,7 +141,7 @@ export const Navbar = () => {
 
       {/* Mobile Navigation Dropdown */}
       {mobileMenuOpen && (
-        <div className="lg:hidden bg-[#0a261e] border-b border-[#d4af37]/40 px-4 pt-3 pb-6 space-y-2 shadow-2xl">
+        <div className="lg:hidden bg-[#071224] border-b border-[#dfc17b]/40 px-4 pt-3 pb-6 space-y-2 shadow-2xl">
           {navLinks.map((link) => {
             const isActive = activeTab === link.id;
             return (
@@ -154,17 +150,17 @@ export const Navbar = () => {
                 onClick={() => handleNavClick(link.id)}
                 className={`w-full text-left px-4 py-3 rounded-lg text-base font-semibold transition-colors flex items-center justify-between ${
                   isActive 
-                    ? 'text-[#0d2e24] bg-[#faf5eb] border-l-4 border-[#d4af37]' 
-                    : 'text-[#f0e7d8] hover:bg-[#134234]'
+                    ? 'text-[#0b1a30] bg-[#fcfaf6] border-l-4 border-[#dfc17b]' 
+                    : 'text-[#e8dfce] hover:bg-[#132a48]'
                 }`}
               >
                 <span>{link.label}</span>
-                {isActive && <ChevronRight className="w-4 h-4 text-[#0d2e24]" />}
+                {isActive && <ChevronRight className="w-4 h-4 text-[#0b1a30]" />}
               </button>
             );
           })}
           
-          <div className="pt-4 border-t border-emerald-900/50 flex flex-col gap-2.5">
+          <div className="pt-4 border-t border-[#132a48] flex flex-col gap-2.5">
             <button
               onClick={() => {
                 setMobileMenuOpen(false);
@@ -173,16 +169,6 @@ export const Navbar = () => {
               className="w-full gold-button-gradient font-bold py-3 rounded-lg text-center"
             >
               Book Catering / Get Quote
-            </button>
-            <button
-              onClick={() => {
-                setMobileMenuOpen(false);
-                setIsAdminMode(true);
-              }}
-              className="w-full text-center text-xs text-stone-300 hover:text-[#f3d37a] py-2 flex items-center justify-center gap-1.5"
-            >
-              <Lock className="w-3.5 h-3.5" />
-              <span>Admin Management Portal</span>
             </button>
           </div>
         </div>

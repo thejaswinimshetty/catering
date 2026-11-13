@@ -1,8 +1,8 @@
-import React from 'react';
+﻿import React from 'react';
 import { useCatering } from '../context/CateringContext';
 import { Navbar } from '../components/Navbar';
 import { Hero } from '../components/Hero';
-import { AboutSection } from '../components/AboutSection';
+import { CateringMenuSection } from '../components/CateringMenuSection';
 import { PackagesSection } from '../components/PackagesSection';
 import { ProductsSection } from '../components/ProductsSection';
 import { GallerySection } from '../components/GallerySection';
@@ -15,7 +15,7 @@ export const UserView = () => {
   const { activeTab } = useCatering();
 
   return (
-    <div className="min-h-screen bg-[#faf6ee] text-[#1c2e26] flex flex-col justify-between selection:bg-[#d4af37] selection:text-[#0d2e24]">
+    <div className="min-h-screen bg-[#fcfaf6] text-[#0b1a30] flex flex-col justify-between selection:bg-[#dfc17b] selection:text-[#0b1a30]">
       {/* Global Navbar */}
       <Navbar />
 
@@ -26,8 +26,14 @@ export const UserView = () => {
             {/* Brand Information Hero */}
             <Hero />
             
-            {/* About Section is kept right on the homepage as requested */}
-            <AboutSection />
+            {/* Authentic Catering Menu Book Section with Categories & Dish Options */}
+            <CateringMenuSection />
+          </div>
+        )}
+
+        {activeTab === 'menu' && (
+          <div className="animate-fadeIn">
+            <CateringMenuSection />
           </div>
         )}
 
